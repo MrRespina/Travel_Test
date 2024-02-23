@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<link rel="stylesheet" type="text/css" th:href="@{/css/index.css}" />
+<meta charset="utf-8">
+<title>회원 가입</title>
+</head>
+<body>
+
+    <div id="secondPageContent">
+		<form action="/api/join" method="post">
+			<h1>이름 입력</h1>
+			<hr>
+			<input type="text" name="name" placeholder="이름 입력"></input>
+			<textarea name="info" placeholder="정보 입력"></textarea>
+			<input type="submit" value="확인">
+		</form>
+	</div>
+</body>
+</html>
