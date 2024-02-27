@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html layout:decorate="~{layout}">
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<div layout:fragment="content" class="container my-3">
+		<div class="row my-3">
+			<div class="col-6">
+				<a th:href="@{/board/create}" class="btn btn-primary">질문 등록하기</a>
+			</div>
+			<div class="col-6">
+				<div class="input-group">
+					<select name="index" id="search_index">
+							<option th:value="subject">제목</option>
+							<option th:value="content">내용</option>
+							<option th:value="author_id">글쓴이</option>
+					</select>
+					<input type="text" id="search_kw" class="form-control" th:value="${kw}">
+					<button class="btn btn-outline-secondary" type="button" id="btn_search">찾기</button>
+				</div>
+			</div>
+		</div>
+		<table class="table">
+			<thead class="table-dark">
+				<tr>
+					<th>번호</th>
+					<th style="width:50%">제목</th>
+					<th>글쓴이</th>
+					<th>작성일시</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr class="text-center" th:each="board, loop : ${boardList}">
+					<td th:text="${boardAllCnt - ((page-1) * pageSize) - loop.index}"></td>
+					<td class="text-start">
+						<a th:href="@{|/board/detail/${board.id}|}"
+						th:text="${board.subject}"></a>	
+						<span class="text-danger small ms-2">
+						    <span th:each="answerCnt : ${answerCntList}"
+						          th:if="${board.id == answerCnt.board_id}"
+						          th:text="${answerCnt.answerCnt}"></span>	
+						</span>
+					</td>
+					<td><span th:if="${board.author_id != null}"
+					th:text="${board.author_id}"></span></td>
+					<td th:text="${#temporals.format(board.createDate,
+					'yyyy-MM-dd HH:mm')}"></td>
+				</tr>
+			</tbody>
+		</table>
+		<!-- 페이징 처리 시작 -->
+		<div>
+			<ul class="pagination justify-content-center">
+				<li class="page-item" >
+<!--	        		<a class="page-link" th:href="@{/board/list(page=${page - 1})}" th:if="${page > 1}"> -->
+ 	        		<a class="page-link" href="javascript:void(0);" th:if="${page > 1}" th:data-page="${page - 1}">
+	        			<span>이전</span>
+	        		</a>
+	        	</li>
+	        	<li th:each="pageNum: ${#numbers.sequence(1, totalPages + 1)}"
+	        		th:if="${pageNum >= page-5 and pageNum <= page+5}"
+					th:classappend="${pageNum == page} ? 'active' : ''" class="page-item">
+<!--	        		<a th:href="@{/board/list(page=${pageNum})}" th:text="${pageNum}" class="page-link"></a>-->
+	        		<a th:text="${pageNum}" class="page-link" href="javascript:void(0);" th:data-page="${pageNum}"></a>
+	        	</li>
+	        	<li class="page-item">
+<!-- 	        		<a class="page-link" th:href="@{/board/list(page=${page + 1})}" th:if="${page <= totalPages}"> -->
+	        		<a class="page-link" href="javascript:void(0);" th:if="${page <= totalPages}" th:data-page="${page + 1}">
+						<span>다음</span>	        			
+	        		</a>
+	        	</li>
+	        </ul>
+   		</div>
+		<!-- 페이징 처리 끝 -->
+		<form th:action="@{/board/list}" method="get" id="searchForm">
+			<input type="hidden" id="index" name="index" th:value="${index}">
+			<input type="hidden" id="kw" name="kw" th:value="${kw}">
+			<input type="hidden" id="page" name="page" th:value="${page}">
+		</form>
+	</div>
+	<script layout:fragment="script" type='text/javascript'>
+	var queryString = window.location.search;
+
+	// URLSearchParams 객체를 생성하여 쿼리 문자열을 파싱
+	var params = new URLSearchParams(queryString);
+
+	// kw와 index 매개변수의 값을 가져옴
+	var kw = params.get('kw');
+	var index = params.get('index');
+	
+	const page_elements = document.getElementsByClassName("page-link");
+	Array.from(page_elements).forEach(function(element) {
+		element.addEventListener('click', function() {
+			document.getElementById('index').value = index;
+			document.getElementById('kw').value = kw;
+			document.getElementById('page').value = this.dataset.page;
+			document.getElementById('searchForm').submit();
+		});
+	});
+	const btn_search = document.getElementById("btn_search");
+	btn_search.addEventListener('click', function() {
+		document.getElementById('index').value = document.getElementById('search_index').value;
+		document.getElementById('kw').value = document.getElementById('search_kw').value;
+		document.getElementById('page').value = 1;
+		document.getElementById('searchForm').submit();
+	});
+	</script>
+</body>
+</html>

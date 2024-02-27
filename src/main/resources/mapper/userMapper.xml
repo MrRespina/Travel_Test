@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0 // EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.travel.jo.user.UserMapper">
+
+	<insert id="insertSiteUser"
+		parameterType="com.travel.jo.user.SiteUser">
+		insert into travel.siteuser (username, password, email) 
+			values (#{username}, #{password}, #{email});
+	</insert>
+	
+	<select id="findByUsername" resultType="com.travel.jo.user.SiteUser">
+		select * from travel.siteuser where username=#{username};
+	</select>
+	
+	<delete id="deleteByUsername" parameterType="com.travel.jo.user.SiteUser">
+		DELETE FROM travel.siteuser WHERE username = #{username};
+	</delete>
+	
+	<update id="updateByUsername"
+		parameterType="com.travel.jo.user.SiteUser">
+		UPDATE travel.siteuser SET password = #{password}, email = #{email} 
+			WHERE id = #{id};
+	</update>
+</mapper>
